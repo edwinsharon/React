@@ -1,0 +1,152 @@
+Here’s an example demonstrating how to use the hooks `useState`, `useEffect`, `useMemo`, `useRef`, and `useContext` in a React application.
+
+### **Example: A Counter App with a Theme Context**
+
+---
+
+### **Setup the Context for Theme**
+We'll use `useContext` to provide and consume a theme.
+
+#### `ThemeContext.js`
+```jsx
+import React, { createContext, useState } from 'react';
+
+export const ThemeContext = createContext();
+
+export const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState('light'); // useState for theme switching
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
+
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+```
+
+---
+
+### **Counter App Component**
+
+#### `App.js`
+```jsx
+import React, { useState, useEffect, useMemo, useRef, useContext } from 'react';
+import { ThemeProvider, ThemeContext } from './ThemeContext';
+
+function App() {
+  return (
+    <ThemeProvider>
+      <CounterApp />
+    </ThemeProvider>
+  );
+}
+
+function CounterApp() {
+  const [count, setCount] = useState(0); // useState for count
+  const [text, setText] = useState('');
+  const renderCount = useRef(0); // useRef to track renders
+
+  const { theme, toggleTheme } = useContext(ThemeContext); // useContext for theme
+
+  // useEffect for side effects
+  useEffect(() => {
+    renderCount.current += 1;
+    console.log(`Component has rendered ${renderCount.current} times`);
+  });
+
+  // useMemo to memoize a heavy computation
+  const expensiveCalculation = useMemo(() => {
+    console.log('Calculating...');
+    return count * 10;
+  }, [count]);
+
+  return (
+    <div
+      style={{
+        background: theme === 'light' ? '#ffffff' : '#333333',
+        color: theme === 'light' ? '#000000' : '#ffffff',
+        padding: '20px',
+        textAlign: 'center',
+      }}
+    >
+      <h1>Counter App</h1>
+      <p>Count: {count}</p>
+      <p>Expensive Calculation (count × 10): {expensiveCalculation}</p>
+      <p>Rendered: {renderCount.current} times</p>
+      <button onClick={() => setCount((prev) => prev + 1)}>Increment</button>
+      <button onClick={toggleTheme}>Toggle Theme</button>
+
+      <div style={{ marginTop: '20px' }}>
+        <input
+          type="text"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Type something..."
+        />
+        <p>You typed: {text}</p>
+      </div>
+    </div>
+  );
+}
+
+export default App;
+```
+
+---
+
+### **Explanation of Each Hook Usage**
+
+#### 1. **`useState`**
+   - **Usage**: Manages the `count` state and the `text` state.
+   - **Example**: 
+     ```jsx
+     const [count, setCount] = useState(0);
+     const [text, setText] = useState('');
+     ```
+
+#### 2. **`useEffect`**
+   - **Usage**: Tracks the render count and logs it to the console.
+   - **Example**:
+     ```jsx
+     useEffect(() => {
+       renderCount.current += 1;
+       console.log(`Component has rendered ${renderCount.current} times`);
+     });
+     ```
+
+#### 3. **`useMemo`**
+   - **Usage**: Memoizes the result of the expensive calculation (`count * 10`).
+   - **Example**:
+     ```jsx
+     const expensiveCalculation = useMemo(() => count * 10, [count]);
+     ```
+
+#### 4. **`useRef`**
+   - **Usage**: Tracks how many times the component has rendered.
+   - **Example**:
+     ```jsx
+     const renderCount = useRef(0);
+     ```
+
+#### 5. **`useContext`**
+   - **Usage**: Consumes the theme (`light` or `dark`) and toggles it.
+   - **Example**:
+     ```jsx
+     const { theme, toggleTheme } = useContext(ThemeContext);
+     ```
+
+---
+
+### **Styling and Interaction**
+
+- **Theme Switching**: Controlled by `useContext` via the `ThemeProvider`.
+- **Live Updates**:
+  - Increment count and see `useMemo` recalculate only when `count` changes.
+  - Change text input without affecting the memoized value.
+- **Rendering Log**: `useRef` tracks and logs component renders.
+
+Let me know if you need further clarification or enhancements!
