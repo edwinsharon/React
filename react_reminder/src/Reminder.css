@@ -23,3 +23,26 @@
     border: 1px solid #ccc;
     margin-right: 8px;
 }
+.reminder-list{
+    list-style: none;
+   
+    margin: auto;
+    background-color: darkcyan;
+    color: white;
+    width: 220px;
+    margin-top: 5px;
+    border-radius: 4px;
+   
+}
+.delete-button{
+    background-color: red;
+    color: white;
+    border:none;
+    border-radius: 5px;
+}
+.reminder-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+}
